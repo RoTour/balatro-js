@@ -1,6 +1,7 @@
 import type { Card } from '../entities/Card';
 
-export type HandPlayed = {
-	type: 'HAND_PLAYED';
+export type HandDiscarded = {
+	type: "HAND_DISCARDED";
 	selectedCards: Card[];
-};
+}
+	
