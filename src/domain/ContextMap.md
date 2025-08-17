@@ -1,0 +1,7 @@
+- **Card**: The representation of a physical card. 
+- **Poker Hand**: The cards, up to 5, that the player can play at once.
+- **Active cards**: Cards in a poker hand that are meaningful. e.g.: if playing "QH, QS, QC, 8H", active cards are "QH, QS, QC" (three of a kind)
+- **Chip value**: Default to the card value (can be changed by jokers). When playing a **poker hand**, "active cards" **chipValue** will be added to **chips**.
+- **Chips**: Base score of the played hands
+- **Multiplier**: Score multiplier on the **chips** 
+- **Hand Score**: total of **chips** x **multiplier**
