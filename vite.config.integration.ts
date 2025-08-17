@@ -20,25 +20,9 @@ export default defineConfig({
 			{
 				extends: './vite.config.ts',
 				test: {
-					name: 'client',
-					environment: 'browser',
-					browser: {
-						enabled: true,
-						provider: 'playwright',
-						instances: [{ browser: 'chromium' }]
-					},
-					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-					exclude: ['src/lib/server/**', 'src/**/*.int.{test,spec}.{js,ts}'],
-					setupFiles: ['./vitest-setup-client.ts']
-				}
-			},
-			{
-				extends: './vite.config.ts',
-				test: {
 					name: 'server',
 					environment: 'node',
-					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}', 'src/**/*.int.{test,spec}.{js,ts}']
+					include: ['src/**/*.int.{test,spec}.{js,ts}'],
 				}
 			}
 		]
