@@ -5,3 +5,4 @@
 - **Chips**: Base score of the played hands
 - **Multiplier**: Score multiplier on the **chips** 
 - **Hand Score**: total of **chips** x **multiplier**
+- **Round**: Game session, where player has x amount of hands and y amount of discards to play. Game Session ends when the score goal is reached
