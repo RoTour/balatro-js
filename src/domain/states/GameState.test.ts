@@ -10,7 +10,7 @@ describe('GameState: Game flow', () => {
 	test('Should fill the hand when a round starts', async () => {
 		// Arrange
 		const deckManager = createInMemoryDeckManager();
-		const machine = GameStateMachine(deckManager);
+		const machine = GameStateMachine.of('console', { deckManager });
 		const actor = createActor(machine).start();
 
 		// Act
@@ -22,10 +22,10 @@ describe('GameState: Game flow', () => {
 		// Assert
 		expect(finalState.context.hand.cards).toHaveLength(DefaultGameRules.handMaxSize);
 	});
-	test("Player should be able to select a card", async () => {
+	test('Player should be able to select a card', async () => {
 		// Arrange
 		const deckManager = createInMemoryDeckManager();
-		const machine = GameStateMachine(deckManager);
+		const machine = GameStateMachine.of('console', { deckManager });
 		const actor = createActor(machine).start();
 
 		// Act
@@ -39,10 +39,10 @@ describe('GameState: Game flow', () => {
 		// Assert
 		expect(actor.getSnapshot().context.selectedCards).toHaveLength(1);
 	});
-	test("Player should be able to deselect a card", async () => {
+	test('Player should be able to deselect a card', async () => {
 		// Arrange
 		const deckManager = createInMemoryDeckManager();
-		const machine = GameStateMachine(deckManager);
+		const machine = GameStateMachine.of('console', { deckManager });
 		const actor = createActor(machine).start();
 
 		// Act
@@ -57,10 +57,10 @@ describe('GameState: Game flow', () => {
 		// Assert
 		expect(actor.getSnapshot().context.selectedCards).toHaveLength(0);
 	});
-	test("Player should be able to select 5 cards at most", async () => {
+	test('Player should be able to select 5 cards at most', async () => {
 		// Arrange
 		const deckManager = createInMemoryDeckManager();
-		const machine = GameStateMachine(deckManager);
+		const machine = GameStateMachine.of('console', { deckManager });
 		const actor = createActor(machine).start();
 
 		// Act

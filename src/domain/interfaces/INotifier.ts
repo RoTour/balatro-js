@@ -1,0 +1,1 @@
+export type INotifier = (message: string) => void;

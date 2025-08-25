@@ -1,5 +1,5 @@
 // /Users/rotour/projects/training/functional-programming/final-project-balatrojs/src/domain/config/DefaultGameRules.ts
 export const DefaultGameRules = {
-	handMaxSize: 7,
+	handMaxSize: 5,
 	maxSelectedCards: 5
 };

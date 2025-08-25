@@ -6,15 +6,18 @@ import type { IDeckManager } from '../interfaces/IDeckManager';
 import { DefaultGameRules } from '../config/DefaultGameRules';
 import { isLeft } from 'fp-ts/Either';
 import type { GameEvent } from '../events/GameEvent';
+import type { INotifier } from '../interfaces/INotifier';
+import { createInMemoryDeckManager } from '../services/InMemoryDeckManager';
+import { ConsoleNotifier } from '../services/ConsoleNotifier';
 
-export const GameStateMachine = (deckManager: IDeckManager) =>
+const _GameStateMachine = (deckManager: IDeckManager, notifier: INotifier) =>
 	setup({
 		types: {
 			context: {
 				hand: {} as PlayerHand,
-				selectedCards: {} as Card[],
+				selectedCards: [] as Card[]
 			},
-			events: {} as GameEvent,
+			events: {} as GameEvent
 		},
 		actors: {
 			fillHand: fromPromise(async () => {
@@ -22,10 +25,17 @@ export const GameStateMachine = (deckManager: IDeckManager) =>
 				const task = Hand.fill(deckManager)(hand);
 				const result = await task(); // Execute TaskEither
 				if (isLeft(result)) {
-					return Promise.reject(result.left);
+					return Promise.reject(result.left.message);
 				}
 				return result.right;
 			})
+		},
+		actions: {
+			notifyMaxCards: () => {
+				return notifier(`You cannot select more than ${DefaultGameRules.maxSelectedCards} cards.`);
+			},
+			notifyCardNotFound: () => notifier('Card not found in hand.'),
+			notifyFillHandError: ({ event }) => notifier(`Error: ${event.data}`)
 		}
 	}).createMachine({
 		context: {
@@ -51,41 +61,43 @@ export const GameStateMachine = (deckManager: IDeckManager) =>
 						})
 					},
 					onError: {
-						// TODO: Go to a proper error state
-						target: 'IDLE'
+						target: 'IDLE',
+						actions: 'notifyFillHandError'
 					}
 				}
 			},
 			PICKING: {
 				on: {
-					CARD_SELECTED: {
-						actions: [
-							assign({
+					CARD_SELECTED: [
+						{
+							guard: ({ context }) =>
+								context.selectedCards.length >= DefaultGameRules.maxSelectedCards,
+							actions: 'notifyMaxCards'
+						},
+						{
+							guard: ({ context, event }) =>
+								!context.hand.cards.some((c) => c.code === event.cardCode),
+							actions: 'notifyCardNotFound'
+						},
+						{
+							actions: assign({
 								selectedCards: ({ context, event }) => {
-									if (context.selectedCards.length >= DefaultGameRules.maxSelectedCards) {
-										return context.selectedCards;
-									}
-									const card = context.hand.cards.find((card) => card.code === event.cardCode);
-									if (!card) {
-										return context.selectedCards;
-									}
+									const card = context.hand.cards.find((c) => c.code === event.cardCode)!;
 									return [...context.selectedCards, card];
 								}
 							})
-						]
-					},
+						}
+					],
 					CARD_DESELECTED: {
 						actions: [
 							assign({
 								selectedCards: ({ context, event }) => {
-									return context.selectedCards.filter((card) => card.code !== event.cardCode)
+									return context.selectedCards.filter((card) => card.code !== event.cardCode);
 								}
 							})
 						]
 					},
-					HAND_PLAYED: {
-
-					},
+					HAND_PLAYED: {},
 					HAND_DISCARDED: {
 						actions: [
 							assign({
@@ -100,11 +112,16 @@ export const GameStateMachine = (deckManager: IDeckManager) =>
 		}
 	});
 
-export const getStateActor =
-	(deckManager: IDeckManager) =>
-	(subscribers: (() => void)[] = []) => {
-		const actor = createActor(GameStateMachine(deckManager));
-		subscribers.forEach((subscriber) => actor.subscribe(subscriber));
-		actor.start();
-		return { actor, stopActor: () => actor.stop() };
-	};
+type GameStateMachineType = 'console';
+type GameStateMachineConfig = {
+	deckManager?: IDeckManager;
+};
+export const GameStateMachine = {
+	of: (type: GameStateMachineType, config: GameStateMachineConfig = {}) => {
+		config.deckManager ??= createInMemoryDeckManager();
+		switch (type) {
+			case 'console':
+				return _GameStateMachine(config.deckManager, ConsoleNotifier());
+		}
+	}
+};

@@ -1,18 +1,8 @@
-import type { HandPlayed } from './HandPlayed';
-import type { HandDiscarded } from './HandDiscarded';
+// /Users/rotour/projects/training/functional-programming/final-project-balatrojs/src/domain/events/GameEvent.ts
 
-export type RoundStarted = {
-	type: 'ROUND_STARTED';
-};
-
-export type CardSelected = {
-	type: 'CARD_SELECTED';
-	cardCode: string;
-};
-
-export type CardDeselected = {
-	type: 'CARD_DESELECTED';
-	cardCode: string;
-};
-
-export type GameEvent = RoundStarted | HandPlayed | HandDiscarded | CardSelected | CardDeselected;
+export type GameEvent =
+	| { type: 'ROUND_STARTED' }
+	| { type: 'CARD_SELECTED'; cardCode: string }
+	| { type: 'CARD_DESELECTED'; cardCode: string }
+	| { type: 'HAND_PLAYED' }
+	| { type: 'HAND_DISCARDED' };
