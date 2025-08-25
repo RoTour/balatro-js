@@ -1,5 +1,5 @@
 // /Users/rotour/projects/training/functional-programming/final-project-balatrojs/src/domain/services/PokerService.ts
-import type { Card, CardValue } from '../entities/Card';
+import { cardValueMap, type Card, type CardValue } from '../entities/Card';
 
 export type PokerHandType =
 	| 'highest'
@@ -17,22 +17,6 @@ export type PokerHandType =
 // 2, 3, 4, 5, 6, 7, 8, 9, 0, J, Q, K, A
 // Cards suite:
 // S (Spades), C (Clovers), D (Diamonds), H (Hearts)
-
-const cardValueMap: Record<CardValue, number> = {
-	'2': 2,
-	'3': 3,
-	'4': 4,
-	'5': 5,
-	'6': 6,
-	'7': 7,
-	'8': 8,
-	'9': 9,
-	'0': 10,
-	J: 11,
-	Q: 12,
-	K: 13,
-	A: 14
-};
 
 const isFlush = (hand: Card[]): boolean => {
 	if (hand.length !== 5) return false;

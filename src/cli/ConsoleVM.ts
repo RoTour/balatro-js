@@ -18,10 +18,15 @@ export class ConsoleVM {
 
 		this.actor.subscribe((snapshot) => {
 			console.clear();
+			UI.displayGameInfo(snapshot.context.score, snapshot.context.lastHandScore);
 			UI.displayHand(snapshot.context.hand, snapshot.context.selectedCards);
 			console.log(`\nState: ${snapshot.value}`); // Log current state for debugging
 
-			if (snapshot.matches('IDLE') || snapshot.matches('PICKING')) {
+			if (
+				snapshot.matches('IDLE') ||
+				snapshot.matches('PICKING') ||
+				snapshot.matches('HAND_SCORED')
+			) {
 				this.promptUserForAction();
 			}
 		});
@@ -90,6 +95,15 @@ export class ConsoleVM {
 				} else if (action === 'Discard Selected Cards') {
 					this.actor.send({ type: 'HAND_DISCARDED' });
 				}
+			} else if (snapshot.matches('HAND_SCORED')) {
+				await inquirer.prompt([
+					{
+						type: 'input',
+						name: 'continue',
+						message: 'Press <Enter> to continue...'
+					}
+				]);
+				this.actor.send({ type: 'CONTINUE' });
 			}
 		} finally {
 			this.isPrompting = false;

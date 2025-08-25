@@ -5,4 +5,5 @@ export type GameEvent =
 	| { type: 'CARD_SELECTED'; cardCode: string }
 	| { type: 'CARD_DESELECTED'; cardCode: string }
 	| { type: 'HAND_PLAYED' }
-	| { type: 'HAND_DISCARDED' };
+	| { type: 'HAND_DISCARDED' }
+	| { type: 'CONTINUE' };

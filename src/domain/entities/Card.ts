@@ -1,3 +1,4 @@
+// /Users/rotour/projects/training/functional-programming/final-project-balatrojs/src/domain/entities/Card.ts
 import * as E from 'fp-ts/Either';
 
 export type CardSuite = 'Spades' | 'Clovers' | 'Diamonds' | 'Hearts';
@@ -7,6 +8,22 @@ export type Card = {
 	code: string; // 5S, QH, etc
 	value: CardValue; // 2, 3, ... 10, 11
 	suite: CardSuite;
+};
+
+export const cardValueMap: Record<CardValue, number> = {
+	'2': 2,
+	'3': 3,
+	'4': 4,
+	'5': 5,
+	'6': 6,
+	'7': 7,
+	'8': 8,
+	'9': 9,
+	'0': 10,
+	J: 11,
+	Q: 12,
+	K: 13,
+	A: 14
 };
 
 const getSuiteFromCode = (code: string): E.Either<string, CardSuite> => {
@@ -34,6 +51,10 @@ const getValueFromCode = (code: string): E.Either<string, CardValue> => {
 	return E.right(secondChar as CardValue);
 };
 
+const sortCards = (cards: readonly Card[]): Card[] => {
+	return [...cards].sort((a, b) => cardValueMap[a.value] - cardValueMap[b.value]);
+};
+
 export const Card = {
 	of: (code: string): Card => {
 		const suite = getSuiteFromCode(code);
@@ -49,5 +70,6 @@ export const Card = {
 			value: value.right,
 			suite: suite.right
 		};
-	}
+	},
+	sort: sortCards
 };

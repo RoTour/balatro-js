@@ -1,5 +1,5 @@
 // /Users/rotour/projects/training/functional-programming/final-project-balatrojs/src/domain/entities/Hand.ts
-import type { Card } from './Card';
+import { Card, type Card } from './Card';
 import type { IDeckManager, DeckError } from '../interfaces/IDeckManager';
 import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/function';
@@ -17,7 +17,7 @@ export const Hand = {
 
 	addCards: (cardsToAdd: readonly Card[]) => (hand: PlayerHand): PlayerHand => ({
 		...hand,
-		cards: [...hand.cards, ...cardsToAdd]
+		cards: Card.sort([...hand.cards, ...cardsToAdd])
 	}),
 
 	removeCards: (cardsToRemove: readonly Card[]) => (hand: PlayerHand): PlayerHand => ({
